@@ -36,38 +36,26 @@ export class DataFacService {
                 dateDim: { date: searchDataAreaFactDto.date },
                 areaDim: searchDataAreaFactDto.area,
             },
-            relations: ['areaDim', 'dateDim', 'provinceDim'],
+            relations: ['areaDim', 'dateDim', 'provinceDim','prizeDim'],
             order: { dateDim: 'ASC' },
         });
-        const result = {};
-        data.forEach((item) => {
-            if (result[`${item.provinceDim.id}`]) {
-                result[`${item.provinceDim.id}`].push(item);
-            } else {
-                result[`${item.provinceDim.id}`] = [item];
-            }
-        });
-        return result;
+       
+        return data;
     }
     async home() {
-        const date = await this.dataFacRepository.findOne({
-            relations: ['dateDim'],
-            order: { dateDim: 'DESC' },
-        });
+        const date = await this.dataFacRepository.createQueryBuilder('dataFac')
+            .leftJoinAndSelect('dataFac.dateDim', 'dateDim')
+             .orderBy('dateDim.date', 'DESC')
+            .getOne();
+            
+
         const data = await this.dataFacRepository.find({
             where: { dateDim: date.dateDim },
-            relations: ['areaDim', 'dateDim', 'provinceDim'],
+            relations: ['areaDim', 'dateDim', 'provinceDim','prizeDim'],
             order: { dateDim: 'ASC' },
         });
-        const result = {};
-        data.forEach((item) => {
-            if (result[`${item.provinceDim.id}`]) {
-                result[`${item.provinceDim.id}`].push(item);
-            } else {
-                result[`${item.provinceDim.id}`] = [item];
-            }
-        });
-        return result;
+       
+        return data;
     }
     async searchByProvince(searchDataProvinceDto: SearchDataProvinceDto) {
         return await this.dataFacRepository.find({
@@ -75,9 +63,11 @@ export class DataFacService {
                 dateDim: { date: searchDataProvinceDto.date },
                 provinceDim: searchDataProvinceDto.province,
             },
-            relations: ['areaDim', 'dateDim', 'provinceDim'],
+            relations: ['areaDim', 'dateDim', 'provinceDim','prizeDim'],
         });
     }
+
+   
 
     async update(id: number, updateDataFacDto: UpdateDataFacDto) {
         return await `This action updates a #${id} dataFac`;
@@ -86,4 +76,5 @@ export class DataFacService {
     async remove(id: number) {
         return await `This action removes a #${id} dataFac`;
     }
+
 }

@@ -41,7 +41,7 @@ export class DataFacEntity {
     @Column({ type: 'nvarchar', length: 255 })
     result: string;
 
-    @Column({ name: 'dayexpiration_date' })
+    @Column({ name: 'dayexpiration_date',default:'9999-12-31 00:00:00' })
     dayexpirationDate: Date;
 
     @CreateDateColumn({ name: 'created_at' })
